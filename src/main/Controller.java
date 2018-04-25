@@ -1,7 +1,6 @@
 package main;
 
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.fxml.FXML;
@@ -10,14 +9,16 @@ import javafx.scene.control.Button;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.event.EventHandler;
 
-import java.awt.event.ActionListener;
-import java.beans.EventHandler;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable{
+
+    private boolean isPlaying = true;
+
     @FXML private MediaView mediaView;
     private MediaPlayer mediaPlayer;
     private Media media;
@@ -37,13 +38,27 @@ public class Controller implements Initializable{
         width.bind(Bindings.selectDouble(mediaView.sceneProperty(),"width"));
         height.bind(Bindings.selectDouble(mediaView.sceneProperty(),"height"));
 
-        //lisiner nie dziala ;0
-        playPause.setOnAction(new EventHandler<ActionEvent>() {
+
+        //need to change for lambdas but how xd
+        /*playPause.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Hello World!");
+                playOrPause();
             }
-        });
+        });*/
+        //this is lambda ;o, shorter but...
+        playPause.setOnAction((event) -> playOrPause());
+
+    }
+
+    private void playOrPause(){
+        if (isPlaying) {
+            isPlaying = !isPlaying;
+            mediaPlayer.pause();
+        } else {
+            isPlaying = !isPlaying;
+            mediaPlayer.play();
+        }
     }
 
 
