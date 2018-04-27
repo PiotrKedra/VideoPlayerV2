@@ -1,0 +1,10 @@
+.root{
+    -fx-background-color: #7CAFC2;
+    -fx-text-fill: blue;
+    -fx-border-color: #7CAFC2;
+}
+
+.menu{
+    -fx-background-color: #7CAFC2;
+    -fx-text-fill: blue;
+}

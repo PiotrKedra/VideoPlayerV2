@@ -1,24 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.media.MediaView?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
+<BorderPane focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500" minWidth="700" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
+    <top>
+        <MenuBar>
+         <menus>
+            <Menu mnemonicParsing="false" text="File">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Open">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+              </items>
+            </Menu>
+         </menus></MenuBar>
+    </top>
    <center>
-      <MediaView fx:id="mediaView" fitHeight="200.0" fitWidth="200.0" BorderPane.alignment="CENTER" />
+      <MediaView fx:id="mediaView" />
    </center>
    <bottom>
-      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button fx:id="fastScroolBack" mnemonicParsing="false" text="&lt;&lt;" textAlignment="CENTER" />
-            <Button fx:id="scroolBack" mnemonicParsing="false" text="&lt;" />
-            <Button fx:id="playPause" mnemonicParsing="false" text="play/pause" />
-            <Button fx:id="scroolForward" mnemonicParsing="false" text="&gt;" />
-            <Button fx:id="fastScroolForward" mnemonicParsing="false" text="&gt;&gt;" />
-         </children>
-      </HBox>
+      <GridPane fx:id="bottomMenu" alignment="CENTER" prefHeight="70.0" prefWidth="700.0" style="-fx-background-color: #7CAFC2;" BorderPane.alignment="TOP_CENTER">
+         <HBox fx:id="bottomHBox" alignment="CENTER" layoutX="211.0" layoutY="20.0">
+            <children>
+                  <Button fx:id="fastScrollBack" mnemonicParsing="false" text="&lt;&lt;" textAlignment="CENTER" />
+                  <Button fx:id="scrollBack" mnemonicParsing="false" text="&lt;" />
+                  <Button fx:id="playPause" mnemonicParsing="false" text="play/pause" />
+                  <Button fx:id="scrollForward" mnemonicParsing="false" text="&gt;" />
+                  <Button fx:id="fastScrollForward" mnemonicParsing="false" text="&gt;&gt;" />
+                  <Button fx:id="fullScreen" mnemonicParsing="false" text="full" />
+            </children>
+         </HBox>
+         <Slider GridPane.rowIndex="1" />
+         <ProgressBar prefWidth="200.0" progress="0.0" GridPane.rowIndex="2" />
+         <columnConstraints>
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
+      </GridPane>
    </bottom>
 </BorderPane>
