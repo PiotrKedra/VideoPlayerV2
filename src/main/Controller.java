@@ -2,16 +2,24 @@ package main;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -29,6 +37,12 @@ public class Controller implements Initializable{
 
     @FXML private HBox bottomHBox;
     @FXML private GridPane bottomMenu;
+    @FXML private GridPane leftGridPane;
+    @FXML private HBox leftHBox;
+    @FXML private ProgressBar progressBar;
+    @FXML private Text currentDuration;
+    @FXML private Text duration;
+
     @FXML private Button playPause;
     @FXML private Button scrollBack;
     @FXML private Button scrollForward;
@@ -64,9 +78,53 @@ public class Controller implements Initializable{
         fastScrollForward.setOnAction(event -> scroll(20000));
         fullScreen.setOnAction(event -> setFullScreen());
 
-        bottomHBox.setAlignment(Pos.CENTER);
        // bottomBar.getStylesheets().add("style/BottomBar.css");
        // playPause.getStylesheets().add("style/BottomBar.css");
+
+
+
+
+        mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
+            @Override
+            public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
+                currentDuration.setText(Double.toString(newValue.toSeconds()));
+                progressBar.setProgress(newValue.toSeconds()/Double.parseDouble(duration.getText()));
+
+            }
+        });
+
+
+        progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                progressBar.setProgress(event.getX()/(progressBar.getWidth())+0.01); //manulay add 1% ??xd
+                System.out.println("changed progres %: " + progressBar.getProgress());
+                double newDurationOfMedia = progressBar.getProgress()*media.getDuration().toMillis();
+                mediaPlayer.seek(new Duration(newDurationOfMedia));
+            }
+        });
+
+
+        //its oke, but need to get an explenation of why i have to add 1% so it works
+        progressBar.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println(progressBar.getLayoutX());
+                System.out.println(event.getX());
+                progressBar.setProgress(event.getX()/(progressBar.getWidth())+0.01); //manulay add 1% ??xd
+                System.out.println("changed progres %: " + progressBar.getProgress());
+                double newDurationOfMedia = progressBar.getProgress()*media.getDuration().toMillis();
+                mediaPlayer.seek(new Duration(newDurationOfMedia));
+            }
+        });
+        progressBar.onDragDetectedProperty();
+        mediaPlayer.setOnReady(()->{
+            currentDuration.setText("0");
+            System.out.println(currentDuration.getText());
+            System.out.println(media.getDuration());
+            duration.setText(Double.toString(media.getDuration().toSeconds()));
+        });
+
 
     }
 
@@ -98,6 +156,5 @@ public class Controller implements Initializable{
         }
 
     }
-
 
 }
