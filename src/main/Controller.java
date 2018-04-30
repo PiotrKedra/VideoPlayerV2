@@ -12,6 +12,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -43,7 +45,7 @@ public class Controller implements Initializable{
     @FXML private Text currentDuration;
     @FXML private Text duration;
 
-    @FXML private Button playPause;
+    @FXML private ImageView playPause;
     @FXML private Button scrollBack;
     @FXML private Button scrollForward;
     @FXML private Button fastScrollBack;
@@ -71,13 +73,18 @@ public class Controller implements Initializable{
             }
         });*/
         //this is lambda ;o, shorter but...
-        playPause.setOnAction((event) -> playOrPause());
+
+        //playPause.setOnAction((event) -> playOrPause());
         scrollBack.setOnAction(event -> scroll(-5000));
         scrollForward.setOnAction(event -> scroll(5000));
         fastScrollBack.setOnAction(event -> scroll(-20000));
         fastScrollForward.setOnAction(event -> scroll(20000));
         fullScreen.setOnAction(event -> setFullScreen());
 
+        final Image image = new Image(getClass().getResourceAsStream("/pngs/play.png"));
+        //playPause.setGraphic(new ImageView(image));
+
+        playPause.setImage(image);
        // bottomBar.getStylesheets().add("style/BottomBar.css");
        // playPause.getStylesheets().add("style/BottomBar.css");
 

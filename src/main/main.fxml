@@ -6,6 +6,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -39,7 +40,7 @@
             <children>
                   <Button fx:id="fastScrollBack" mnemonicParsing="false" text="&lt;&lt;" textAlignment="CENTER" />
                   <Button fx:id="scrollBack" mnemonicParsing="false" text="&lt;" />
-                  <Button fx:id="playPause" mnemonicParsing="false" text="play/pause" />
+               <ImageView fx:id="playPause" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" />
                   <Button fx:id="scrollForward" mnemonicParsing="false" text="&gt;" />
                   <Button fx:id="fastScrollForward" mnemonicParsing="false" text="&gt;&gt;" />
                   <Button fx:id="fullScreen" mnemonicParsing="false" text="full" />

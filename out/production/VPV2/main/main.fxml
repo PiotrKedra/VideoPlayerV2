@@ -6,6 +6,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -39,7 +40,7 @@
             <children>
                   <Button fx:id="fastScrollBack" mnemonicParsing="false" text="&lt;&lt;" textAlignment="CENTER" />
                   <Button fx:id="scrollBack" mnemonicParsing="false" text="&lt;" />
-                  <Button fx:id="playPause" mnemonicParsing="false" text="play/pause" />
+               <ImageView fx:id="playPause" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" />
                   <Button fx:id="scrollForward" mnemonicParsing="false" text="&gt;" />
                   <Button fx:id="fastScrollForward" mnemonicParsing="false" text="&gt;&gt;" />
                   <Button fx:id="fullScreen" mnemonicParsing="false" text="full" />
@@ -50,18 +51,15 @@
          <Text fx:id="duration" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" GridPane.columnIndex="4" GridPane.rowIndex="1" />
          <BorderPane prefHeight="200.0" prefWidth="200.0">
             <left>
-               <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="BOTTOM_LEFT">
-                  <children>
-                     <Button mnemonicParsing="false" text="Button" />
-                  </children></HBox>
+               <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="BOTTOM_LEFT" />
             </left></BorderPane>
-         <GridPane fx:id="leftGridPane" alignment="CENTER_RIGHT" GridPane.columnIndex="6" BorderPane.alignment="TOP_CENTER">
+         <GridPane fx:id="leftGridPane" alignment="CENTER_RIGHT" BorderPane.alignment="TOP_CENTER" GridPane.columnIndex="6">
             <children>
-               <HBox prefHeight="0.0" alignment="CENTER_RIGHT" prefWidth="0.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+               <HBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="0.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                   <children>
-                     <Button mnemonicParsing="false" text="Button" />
-                     <Button mnemonicParsing="false" text="Button" />
-                     <Button mnemonicParsing="false" text="Button" />
+                     <Button fx:id="addSubtitles" mnemonicParsing="false" text="Button" />
+                     <Button fx:id="fullScreen" mnemonicParsing="false" text="Button" />
+                     <Button fx:id="soudOnOff" mnemonicParsing="false" text="Button" />
                      <Slider />
                   </children>
                </HBox>
