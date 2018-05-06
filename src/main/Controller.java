@@ -1,21 +1,14 @@
 package main;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
@@ -27,7 +20,10 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Controller implements Initializable{
 
@@ -81,21 +77,20 @@ public class Controller implements Initializable{
         fastScrollForward.setOnAction(event -> scroll(20000));
         fullScreen.setOnAction(event -> setFullScreen());
 
-        final Image image = new Image(getClass().getResourceAsStream("/pngs/play.png"));
         //playPause.setGraphic(new ImageView(image));
 
-        playPause.setImage(image);
        // bottomBar.getStylesheets().add("style/BottomBar.css");
        // playPause.getStylesheets().add("style/BottomBar.css");
 
 
+        playPause.setOnMouseClicked(event -> playOrPause());
 
 
         mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
             @Override
             public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
-                currentDuration.setText(Double.toString(newValue.toSeconds()));
-                progressBar.setProgress(newValue.toSeconds()/Double.parseDouble(duration.getText()));
+                currentDuration.setText(secundsToHHMMSS(newValue.toSeconds()));
+                progressBar.setProgress(newValue.toSeconds()/HHMMSStoSecunds(duration.getText()));
 
             }
         });
@@ -125,11 +120,12 @@ public class Controller implements Initializable{
             }
         });
         progressBar.onDragDetectedProperty();
+
         mediaPlayer.setOnReady(()->{
-            currentDuration.setText("0");
+            currentDuration.setText("00:00:00");
             System.out.println(currentDuration.getText());
             System.out.println(media.getDuration());
-            duration.setText(Double.toString(media.getDuration().toSeconds()));
+            duration.setText(secundsToHHMMSS(media.getDuration().toSeconds()));
         });
 
 
@@ -164,4 +160,43 @@ public class Controller implements Initializable{
 
     }
 
+    //change secuds to HH:MM:SS, exm: 310 -> HH:MM:SS
+    static private String secundsToHHMMSS(double sec){
+        int intSec = (int) sec;
+        Integer secunds = intSec%60;
+        Integer minutes = (intSec/60)%60;
+        Integer hours = ((intSec/60)/60)%60;
+        String stringSecunds;
+        String stringMinutes;
+        String stringHours;
+        if(secunds<10){
+            stringSecunds = 0 + secunds.toString(); // 01, 02..
+        }else stringSecunds = secunds.toString(); // 12,42 ...
+        if(minutes<10){
+            stringMinutes = 0 + minutes.toString();
+        }else stringMinutes = minutes.toString();
+        if(hours<10){
+            stringHours = 0 + hours.toString();
+        }else stringHours = hours.toString();
+
+        return stringHours+':'+stringMinutes+':'+stringSecunds;
+    }
+
+    //HH:MM:SS to secunds
+    //example: 00:05:10 -> 310
+    static private int HHMMSStoSecunds(String HHMMSS){
+        Pattern pattern = Pattern.compile(":");
+        int secunds = 0;
+        String[] time = pattern.split(HHMMSS);
+        secunds += Integer.parseInt(time[0])*3600;  //hours = 3600 secunds
+        secunds += Integer.parseInt(time[1])*60; //minutes 60 secunds
+        secunds += Integer.parseInt(time[2]); //secunds
+        return secunds;
+    }
+
+    public static void main(String [] a){
+        String h=secundsToHHMMSS(3996.2332123);
+        System.out.println(h);
+        System.out.println(HHMMSStoSecunds(h));
+    }
 }
