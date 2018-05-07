@@ -121,6 +121,7 @@ public class Controller implements Initializable{
             }
         });
 
+        progressBar.getStylesheets().add("/style/progresBar.css");
 
         progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
@@ -145,7 +146,6 @@ public class Controller implements Initializable{
                 mediaPlayer.seek(new Duration(newDurationOfMedia));
             }
         });
-        progressBar.onDragDetectedProperty();
 
         mediaPlayer.setOnReady(()->{
             currentDuration.setText("00:00:00");
@@ -169,7 +169,7 @@ public class Controller implements Initializable{
         }
     }
 
-    public void scroll(int millis){
+    private void scroll(int millis){
         if(mediaPlayer!=null) {
             Duration currentTime = mediaPlayer.getCurrentTime();
             currentTime = currentTime.add(new Duration(millis));
