@@ -29,6 +29,8 @@ import java.util.regex.Pattern;
 public class Controller implements Initializable{
 
     private boolean isPlaying = true;
+    private boolean isSoundOn = true;
+    private boolean isFullScreen = false;
 
     @FXML private MediaView mediaView;
     private MediaPlayer mediaPlayer;
@@ -43,19 +45,34 @@ public class Controller implements Initializable{
     @FXML private Text duration;
 
     @FXML private ImageView playPause;
-    @FXML private Button scrollBack;
-    @FXML private Button scrollForward;
-    @FXML private Button fastScrollBack;
-    @FXML private Button fastScrollForward;
-    @FXML private Button fullScreen;
+    @FXML private ImageView scrollBack;
+    @FXML private ImageView scrollForward;
+    @FXML private ImageView fastRewind;
+    @FXML private ImageView fastForward;
+    @FXML private ImageView fullScreen;
+    @FXML private ImageView subtitles;
+    @FXML private ImageView soundOn;
 
 
-    //images
+    //images, icons
     private Image playImage = new Image("/pngs/play.png");
     private Image play2Image = new Image("/pngs/play2.png");
     private Image pauseImage = new Image("/pngs/pause.png");
     private Image pause2Image = new Image("/pngs/pause2.png");
-
+    private Image fastForward2Image = new Image("/pngs/fastForward2.png");
+    private Image fastForwardImage = new Image("/pngs/fastForward.png");
+    private Image fastRewind2Image = new Image("/pngs/fastRewind2.png");
+    private Image fastRewindImage = new Image("/pngs/fastRewind.png");
+    private Image subtitles2Image = new Image("/pngs/subtitles2.png");
+    private Image subtitlesImage = new Image("/pngs/subtitles.png");
+    private Image fullScreen2Image = new Image("/pngs/fullScreen2.png");
+    private Image fullScreenImage = new Image("/pngs/fullScreen.png");
+    private Image soundsOn2Image = new Image("/pngs/speakerOn2.png");
+    private Image soundsOnImage = new Image("/pngs/speakerOn.png");
+    private Image soundsOff2Image = new Image("/pngs/speakerOff2.png");
+    private Image soundsOffImage = new Image("/pngs/speakerOff.png");
+    private Image normalScreen2Image = new Image("/pngs/normalScreen2.png");
+    private Image normalScreenImage = new Image("/pngs/normalScreen.png");
 
 
     @Override
@@ -80,11 +97,9 @@ public class Controller implements Initializable{
         //this is lambda ;o, shorter but...
 
         //playPause.setOnAction((event) -> playOrPause());
-        scrollBack.setOnAction(event -> scroll(-5000));
+/*        scrollBack.setOnAction(event -> scroll(-5000));
         scrollForward.setOnAction(event -> scroll(5000));
-        fastScrollBack.setOnAction(event -> scroll(-20000));
-        fastScrollForward.setOnAction(event -> scroll(20000));
-        fullScreen.setOnAction(event -> setFullScreen());
+        fastScrollBack.setOnAction(event -> scroll(-20000));*/
 
         //playPause.setGraphic(new ImageView(image));
 
@@ -94,6 +109,8 @@ public class Controller implements Initializable{
 
         //playPause.setOnMouseClicked(event -> playOrPause());
 
+        fastForward.setOnMouseClicked(event -> scroll(20000));
+        fastRewind.setOnMouseClicked(event -> scroll(-20000));
 
         mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
             @Override
@@ -152,7 +169,7 @@ public class Controller implements Initializable{
         }
     }
 
-    private void scroll(int millis){
+    public void scroll(int millis){
         if(mediaPlayer!=null) {
             Duration currentTime = mediaPlayer.getCurrentTime();
             currentTime = currentTime.add(new Duration(millis));
@@ -160,19 +177,28 @@ public class Controller implements Initializable{
         }
     }
 
-    private void setFullScreen(){
+    public void setFullScreen(){
         Stage stage = Main.getStage();
         stage.setFullScreen(!stage.isFullScreen());
-        if(Main.getStage().isFullScreen()){
+        isFullScreen = !isFullScreen;
+        if(isFullScreen){
+            fullScreen.setImage(normalScreen2Image);
             //menu have to disapear
         }else {
-            //menu gave to be back
+            //menu have to be back
         }
 
     }
 
+    public void mute(){
+        //in futer it hase to save the last value of sound to bring it back if needed
+        isSoundOn = !isSoundOn;
+        if(isSoundOn) soundOn.setImage(soundsOn2Image);
+        else soundOn.setImage(soundsOff2Image);
+    }
+
     //change secuds to HH:MM:SS, exm: 310 -> HH:MM:SS
-    static private String secundsToHHMMSS(double sec){
+    private String secundsToHHMMSS(double sec){
         int intSec = (int) sec;
         Integer secunds = intSec%60;
         Integer minutes = (intSec/60)%60;
@@ -195,7 +221,7 @@ public class Controller implements Initializable{
 
     //HH:MM:SS to secunds
     //example: 00:05:10 -> 310
-    static private int HHMMSStoSecunds(String HHMMSS){
+    private int HHMMSStoSecunds(String HHMMSS){
         Pattern pattern = Pattern.compile(":");
         int secunds = 0;
         String[] time = pattern.split(HHMMSS);
@@ -207,11 +233,13 @@ public class Controller implements Initializable{
 
     //testing stuff
     public static void main(String [] a){
-        String h=secundsToHHMMSS(3996.2332123);
+        /*String h=secundsToHHMMSS(3996.2332123);
         System.out.println(h);
-        System.out.println(HHMMSStoSecunds(h));
+        System.out.println(HHMMSStoSecunds(h));*/
     }
 
+
+    // ###### changing image while mouse on it, nothing interested
     public void changeImagePlayOnMouseEntered() {
         if(isPlaying) playPause.setImage(pause2Image);
         else playPause.setImage(play2Image);
@@ -220,5 +248,50 @@ public class Controller implements Initializable{
     public void changeImagePlayOnMouseExited() {
         if(isPlaying) playPause.setImage(pauseImage);
         else playPause.setImage(playImage);
+    }
+
+
+    public void changeImageFastForwardOnMouseEntered() {
+        fastForward.setImage(fastForward2Image);
+    }
+
+    public void changeImageFastForwardOnMouseExited() {
+        fastForward.setImage(fastForwardImage);
+    }
+
+    public void changeImageFastRewindOnMouseEntered() {
+        fastRewind.setImage(fastRewind2Image);
+    }
+
+    public void changeImageFastRewindOnMouseExited() {
+        fastRewind.setImage(fastRewindImage);
+    }
+
+    public void changeImageSubtitlesOnMouseEntered() {
+        subtitles.setImage(subtitles2Image);
+    }
+
+    public void changeImageSubtitlesOnMouseExited() {
+        subtitles.setImage(subtitlesImage);
+    }
+
+    public void changeImageFullScreenOnMouseEntered() {
+        if(!isFullScreen) fullScreen.setImage(fullScreen2Image);
+        else fullScreen.setImage(normalScreen2Image);
+    }
+
+    public void changeImageFullScreenOnMouseExited() {
+        if(!isFullScreen) fullScreen.setImage(fullScreenImage);
+        else fullScreen.setImage(normalScreenImage);
+    }
+
+    public void changeImageSoundsOnOnMouseEntered() {
+        if(isSoundOn) soundOn.setImage(soundsOn2Image);
+        else soundOn.setImage(soundsOff2Image);
+    }
+
+    public void changeImageSoundsOnOnMouseExited() {
+        if(isSoundOn) soundOn.setImage(soundsOnImage);
+        else soundOn.setImage(soundsOffImage);
     }
 }
