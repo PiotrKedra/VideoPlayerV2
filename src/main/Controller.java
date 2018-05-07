@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -49,6 +50,14 @@ public class Controller implements Initializable{
     @FXML private Button fullScreen;
 
 
+    //images
+    private Image playImage = new Image("/pngs/play.png");
+    private Image play2Image = new Image("/pngs/play2.png");
+    private Image pauseImage = new Image("/pngs/pause.png");
+    private Image pause2Image = new Image("/pngs/pause2.png");
+
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         String path =  new File("C:/Users/piotr/Desktop/tgt.mp4").getAbsolutePath();
@@ -83,7 +92,7 @@ public class Controller implements Initializable{
        // playPause.getStylesheets().add("style/BottomBar.css");
 
 
-        playPause.setOnMouseClicked(event -> playOrPause());
+        //playPause.setOnMouseClicked(event -> playOrPause());
 
 
         mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
@@ -131,13 +140,15 @@ public class Controller implements Initializable{
 
     }
 
-    private void playOrPause(){
+    public void playOrPause(){
         if (isPlaying) {
             isPlaying = !isPlaying;
             mediaPlayer.pause();
+            playPause.setImage(play2Image);
         } else {
             isPlaying = !isPlaying;
             mediaPlayer.play();
+            playPause.setImage(pause2Image);
         }
     }
 
@@ -194,9 +205,20 @@ public class Controller implements Initializable{
         return secunds;
     }
 
+    //testing stuff
     public static void main(String [] a){
         String h=secundsToHHMMSS(3996.2332123);
         System.out.println(h);
         System.out.println(HHMMSStoSecunds(h));
+    }
+
+    public void changeImagePlayOnMouseEntered() {
+        if(isPlaying) playPause.setImage(pause2Image);
+        else playPause.setImage(play2Image);
+    }
+
+    public void changeImagePlayOnMouseExited() {
+        if(isPlaying) playPause.setImage(pauseImage);
+        else playPause.setImage(playImage);
     }
 }

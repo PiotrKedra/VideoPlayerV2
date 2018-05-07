@@ -6,6 +6,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -15,8 +16,7 @@
 <?import javafx.scene.media.MediaView?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.image.Image?>
-<BorderPane focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500" minWidth="700" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
+<BorderPane focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500" minWidth="700" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #383838;" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
     <top>
         <MenuBar>
          <menus>
@@ -36,14 +36,14 @@
       <MediaView fx:id="mediaView" />
    </center>
    <bottom>
-      <GridPane fx:id="bottomMenu" alignment="CENTER" prefHeight="70.0" prefWidth="700.0" style="-fx-background-color: #7CAFC2;" BorderPane.alignment="TOP_CENTER">
+      <GridPane fx:id="bottomMenu" alignment="CENTER" prefHeight="70.0" prefWidth="700.0" style="-fx-background-color: #585858;" BorderPane.alignment="TOP_CENTER">
          <HBox fx:id="bottomHBox" alignment="CENTER" layoutX="211.0" layoutY="20.0" GridPane.columnIndex="2">
             <children>
                   <Button fx:id="fastScrollBack" mnemonicParsing="false" text="&lt;&lt;" textAlignment="CENTER" />
                   <Button fx:id="scrollBack" mnemonicParsing="false" text="&lt;" />
-               <ImageView fx:id="playPause" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true"  >
+               <ImageView fx:id="playPause" fitHeight="32.0" fitWidth="32.0" onMouseEntered="#changeImagePlayOnMouseEntered" onMouseExited="#changeImagePlayOnMouseExited" onMousePressed="#playOrPause" pickOnBounds="true">
                   <image>
-                     <Image url="@/pngs/play.png"/>
+                     <Image url="@/pngs/pause.png" />
                   </image>
                </ImageView>
                   <Button fx:id="scrollForward" mnemonicParsing="false" text="&gt;" />
@@ -52,8 +52,8 @@
             </children>
          </HBox>
          <ProgressBar fx:id="progressBar" maxHeight="8.0" minHeight="8.0" prefHeight="10.0" prefWidth="360.0" progress="0.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-         <Text fx:id="currentDuration" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-         <Text fx:id="duration" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+         <Text fx:id="currentDuration" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         <Text fx:id="duration" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" GridPane.columnIndex="4" GridPane.rowIndex="1" />
          <BorderPane prefHeight="200.0" prefWidth="200.0">
             <left>
                <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="BOTTOM_LEFT" />
@@ -86,8 +86,8 @@
             <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" />
          </columnConstraints>
          <rowConstraints>
-            <RowConstraints valignment="BOTTOM" vgrow="ALWAYS" />
-            <RowConstraints />
+            <RowConstraints maxHeight="53.0" minHeight="34.0" prefHeight="41.0" valignment="BOTTOM" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="36.0" minHeight="17.0" prefHeight="29.0" />
             <RowConstraints />
          </rowConstraints>
       </GridPane>
