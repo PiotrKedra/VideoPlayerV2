@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -40,6 +41,7 @@ public class Controller implements Initializable{
     @FXML private GridPane bottomMenu;
     @FXML private GridPane leftGridPane;
     @FXML private HBox leftHBox;
+    @FXML private Slider progresSlider;
     @FXML private ProgressBar progressBar;
     @FXML private Text currentDuration;
     @FXML private Text duration;
@@ -116,26 +118,34 @@ public class Controller implements Initializable{
             @Override
             public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
                 currentDuration.setText(secundsToHHMMSS(newValue.toSeconds()));
-                progressBar.setProgress(newValue.toSeconds()/HHMMSStoSecunds(duration.getText()));
+                //progressBar.setProgress(newValue.toSeconds()/HHMMSStoSecunds(duration.getText()));
+                System.out.println(newValue.toSeconds());
+                newValue.toSeconds(); //sth not working
+                progresSlider.setValue(newValue.toSeconds());
 
             }
         });
 
-        progressBar.getStylesheets().add("/style/progresBar.css");
 
-        progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
+        progresSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
-            public void handle(MouseEvent event) {
-                progressBar.setProgress(event.getX()/(progressBar.getWidth())+0.01); //manulay add 1% ??xd
-                System.out.println("changed progres %: " + progressBar.getProgress());
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                progressBar.setProgress(newValue.doubleValue()/media.getDuration().toSeconds()); //manulay add 1% ??xd
+                //System.out.println("changed progres %: " + progressBar.getProgress());
                 double newDurationOfMedia = progressBar.getProgress()*media.getDuration().toMillis();
                 mediaPlayer.seek(new Duration(newDurationOfMedia));
+            }
+        });
+        /*progresSlider.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+
             }
         });
 
 
         //its oke, but need to get an explenation of why i have to add 1% so it works
-        progressBar.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        progresSlider.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println(progressBar.getLayoutX());
@@ -145,13 +155,15 @@ public class Controller implements Initializable{
                 double newDurationOfMedia = progressBar.getProgress()*media.getDuration().toMillis();
                 mediaPlayer.seek(new Duration(newDurationOfMedia));
             }
-        });
+        });*/
 
         mediaPlayer.setOnReady(()->{
             currentDuration.setText("00:00:00");
             System.out.println(currentDuration.getText());
             System.out.println(media.getDuration());
             duration.setText(secundsToHHMMSS(media.getDuration().toSeconds()));
+            progresSlider.setMin(0);
+            progresSlider.setMax(media.getDuration().toSeconds());
         });
 
 
@@ -249,7 +261,6 @@ public class Controller implements Initializable{
         if(isPlaying) playPause.setImage(pauseImage);
         else playPause.setImage(playImage);
     }
-
 
     public void changeImageFastForwardOnMouseEntered() {
         fastForward.setImage(fastForward2Image);
