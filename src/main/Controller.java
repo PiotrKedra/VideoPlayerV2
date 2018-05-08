@@ -1,13 +1,13 @@
 package main;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -22,9 +22,7 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Controller implements Initializable{
@@ -41,7 +39,6 @@ public class Controller implements Initializable{
     @FXML private GridPane bottomMenu;
     @FXML private GridPane leftGridPane;
     @FXML private HBox leftHBox;
-    @FXML private Slider progresSlider;
     @FXML private ProgressBar progressBar;
     @FXML private Text currentDuration;
     @FXML private Text duration;
@@ -89,7 +86,6 @@ public class Controller implements Initializable{
         width.bind(Bindings.selectDouble(mediaView.sceneProperty(),"width"));
         height.bind(Bindings.selectDouble(mediaView.sceneProperty(),"height"));*/
 
-
         /*playPause.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -118,52 +114,33 @@ public class Controller implements Initializable{
             @Override
             public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
                 currentDuration.setText(secundsToHHMMSS(newValue.toSeconds()));
-                //progressBar.setProgress(newValue.toSeconds()/HHMMSStoSecunds(duration.getText()));
-                System.out.println(newValue.toSeconds());
-                newValue.toSeconds(); //sth not working
-                progresSlider.setValue(newValue.toSeconds());
-
+                progressBar.setProgress(newValue.toSeconds()/HHMMSStoSecunds(duration.getText()));
+                System.out.println("aa" + ((int)((newValue.toSeconds()-(int)newValue.toSeconds())*10)));
             }
         });
 
 
-        progresSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                progressBar.setProgress(newValue.doubleValue()/media.getDuration().toSeconds()); //manulay add 1% ??xd
-                //System.out.println("changed progres %: " + progressBar.getProgress());
-                double newDurationOfMedia = progressBar.getProgress()*media.getDuration().toMillis();
-                mediaPlayer.seek(new Duration(newDurationOfMedia));
-            }
+        progressBar.setOnMouseDragged(event -> {
+            progressBar.setProgress(event.getX()/(progressBar.getWidth())+0.01);
+            double newDurationOfMedia = progressBar.getProgress()*media.getDuration().toMillis();
+            mediaPlayer.seek(new Duration(newDurationOfMedia));
         });
-        /*progresSlider.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-
-            }
-        });
-
 
         //its oke, but need to get an explenation of why i have to add 1% so it works
-        progresSlider.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        progressBar.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                System.out.println(progressBar.getLayoutX());
-                System.out.println(event.getX());
                 progressBar.setProgress(event.getX()/(progressBar.getWidth())+0.01); //manulay add 1% ??xd
-                System.out.println("changed progres %: " + progressBar.getProgress());
                 double newDurationOfMedia = progressBar.getProgress()*media.getDuration().toMillis();
                 mediaPlayer.seek(new Duration(newDurationOfMedia));
             }
-        });*/
+        });
 
         mediaPlayer.setOnReady(()->{
             currentDuration.setText("00:00:00");
             System.out.println(currentDuration.getText());
             System.out.println(media.getDuration());
             duration.setText(secundsToHHMMSS(media.getDuration().toSeconds()));
-            progresSlider.setMin(0);
-            progresSlider.setMax(media.getDuration().toSeconds());
         });
 
 

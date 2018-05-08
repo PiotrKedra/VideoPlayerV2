@@ -59,7 +59,6 @@
          </HBox>
          <StackPane stylesheets="@style.css" GridPane.columnIndex="2" GridPane.rowIndex="1">
             <ProgressBar fx:id="progressBar" prefWidth="360.0" progress="0.0" />
-            <Slider fx:id="progresSlider" />
          </StackPane>
          <Text fx:id="currentDuration" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          <Text fx:id="duration" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" GridPane.columnIndex="4" GridPane.rowIndex="1" />
