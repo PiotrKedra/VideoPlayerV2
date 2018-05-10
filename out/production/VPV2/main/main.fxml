@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.Image?>
@@ -11,33 +8,19 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.media.MediaView?>
 <?import javafx.scene.text.Text?>
 
 <BorderPane focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500" minWidth="700" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #383838;" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
-    <top>
-        <MenuBar>
-         <menus>
-            <Menu mnemonicParsing="false" text="File">
-              <items>
-                <MenuItem mnemonicParsing="false" text="Action 1" />
-              </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Open">
-              <items>
-                <MenuItem mnemonicParsing="false" text="Action 1" />
-              </items>
-            </Menu>
-         </menus></MenuBar>
-    </top>
    <center>
       <MediaView fx:id="mediaView" />
    </center>
    <bottom>
       <GridPane fx:id="bottomMenu" alignment="CENTER" prefHeight="70.0" prefWidth="700.0" style="-fx-background-color: #585858;" BorderPane.alignment="TOP_CENTER">
-         <HBox fx:id="bottomHBox" alignment="CENTER" layoutX="211.0" layoutY="20.0" GridPane.columnIndex="2">
+         <HBox fx:id="bottomHBox" alignment="CENTER" layoutX="211.0" layoutY="20.0" spacing="5.0" GridPane.columnIndex="3">
             <children>
                <ImageView fx:id="fastRewind" fitHeight="25.0" fitWidth="25.0" onMouseEntered="#changeImageFastRewindOnMouseEntered" onMouseExited="#changeImageFastRewindOnMouseExited" pickOnBounds="true">
                   <image>
@@ -57,16 +40,16 @@
                </ImageView>
             </children>
          </HBox>
-         <StackPane stylesheets="@style.css" GridPane.columnIndex="2" GridPane.rowIndex="1">
-            <ProgressBar fx:id="progressBar" prefWidth="360.0" progress="0.0" />
+         <StackPane stylesheets="@style.css" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <ProgressBar fx:id="progressBar" onMouseEntered="#changeColorOfProgressBarOnMouseEntered" onMouseExited="#changeColorOfProgressBarOnMouseExited" prefWidth="360.0" progress="0.0" />
          </StackPane>
          <Text fx:id="currentDuration" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-         <Text fx:id="duration" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+         <Text fx:id="duration" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" GridPane.columnIndex="6" GridPane.rowIndex="1" />
          <BorderPane prefHeight="200.0" prefWidth="200.0">
             <left>
                <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="BOTTOM_LEFT" />
             </left></BorderPane>
-         <GridPane fx:id="leftGridPane" alignment="CENTER_RIGHT" BorderPane.alignment="TOP_CENTER" GridPane.columnIndex="6">
+         <GridPane fx:id="leftGridPane" alignment="CENTER_RIGHT" BorderPane.alignment="TOP_CENTER" GridPane.columnIndex="8">
             <children>
                <HBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="0.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                   <children>
@@ -85,7 +68,7 @@
                            <Image url="@../pngs/speakerOn.png" />
                         </image>
                      </ImageView>
-                     <Slider />
+                     <Slider fx:id="soundSlider" value="100.0" />
                   </children>
                </HBox>
             </children>
@@ -96,8 +79,12 @@
                <RowConstraints />
             </rowConstraints>
          </GridPane>
+         <Region minWidth="5.0" prefWidth="5.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+         <Region minWidth="5.0" prefWidth="5.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
          <columnConstraints>
             <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
+            <ColumnConstraints />
+            <ColumnConstraints />
             <ColumnConstraints />
             <ColumnConstraints />
             <ColumnConstraints />

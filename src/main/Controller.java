@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -28,13 +29,15 @@ import java.util.regex.Pattern;
 public class Controller implements Initializable{
 
     private boolean isPlaying = true;
-    private boolean isSoundOn = true;
     private boolean isFullScreen = false;
+    private boolean isSoundOn = true;
+    private double volumeBeforeChange = 1.0;
 
     @FXML private MediaView mediaView;
     private MediaPlayer mediaPlayer;
     private Media media;
 
+    @FXML private Slider soundSlider;
     @FXML private HBox bottomHBox;
     @FXML private GridPane bottomMenu;
     @FXML private GridPane leftGridPane;
@@ -115,7 +118,6 @@ public class Controller implements Initializable{
             public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
                 currentDuration.setText(secundsToHHMMSS(newValue.toSeconds()));
                 progressBar.setProgress(newValue.toSeconds()/HHMMSStoSecunds(duration.getText()));
-                System.out.println("aa" + ((int)((newValue.toSeconds()-(int)newValue.toSeconds())*10)));
             }
         });
 
@@ -133,6 +135,23 @@ public class Controller implements Initializable{
                 progressBar.setProgress(event.getX()/(progressBar.getWidth())+0.01); //manulay add 1% ??xd
                 double newDurationOfMedia = progressBar.getProgress()*media.getDuration().toMillis();
                 mediaPlayer.seek(new Duration(newDurationOfMedia));
+            }
+        });
+
+        soundSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                mediaPlayer.setVolume(newValue.doubleValue()/100);
+                if(newValue.doubleValue()==0) {
+                    volumeBeforeChange = oldValue.doubleValue()/100;
+                    isSoundOn=!isSoundOn;
+                    soundOn.setImage(soundsOffImage);
+                }
+                if(oldValue.doubleValue()==0) {
+                    isSoundOn=!isSoundOn;
+                    soundOn.setImage(soundsOnImage);
+                    if(mediaPlayer.getVolume()<0.3) soundSlider.setValue(30);
+                }
             }
         });
 
@@ -179,13 +198,6 @@ public class Controller implements Initializable{
 
     }
 
-    public void mute(){
-        //in futer it hase to save the last value of sound to bring it back if needed
-        isSoundOn = !isSoundOn;
-        if(isSoundOn) soundOn.setImage(soundsOn2Image);
-        else soundOn.setImage(soundsOff2Image);
-    }
-
     //change secuds to HH:MM:SS, exm: 310 -> HH:MM:SS
     private String secundsToHHMMSS(double sec){
         int intSec = (int) sec;
@@ -227,6 +239,15 @@ public class Controller implements Initializable{
         System.out.println(HHMMSStoSecunds(h));*/
     }
 
+
+    public void mute(){
+        if(!isSoundOn) {
+            soundSlider.setValue(volumeBeforeChange*100);
+        }
+        else {
+            soundSlider.setValue(0);
+        }
+    }
 
     // ###### changing image while mouse on it, nothing interested
     public void changeImagePlayOnMouseEntered() {
@@ -281,5 +302,18 @@ public class Controller implements Initializable{
     public void changeImageSoundsOnOnMouseExited() {
         if(isSoundOn) soundOn.setImage(soundsOnImage);
         else soundOn.setImage(soundsOffImage);
+    }
+
+    public void changeColorOfProgressBarOnMouseEntered() {
+        System.out.println("hohohohohho");
+        //progressBar.setStyle(".progress-Bar .bar -fx-background-color:orangered;");
+        progressBar.getStylesheets().clear();
+        progressBar.getStylesheets().setAll("/style/progressBar2.css");
+
+    }
+
+    public void changeColorOfProgressBarOnMouseExited() {
+        progressBar.getStylesheets().clear();
+        progressBar.getStylesheets().setAll("/style/progresBar.css");
     }
 }
