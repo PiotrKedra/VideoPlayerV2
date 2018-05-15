@@ -1,56 +1,123 @@
 package main;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.Slider;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+
 public class testProgresBar extends Application {
+
+    Scene scene;
+    MouseStatus mouseStatus = new MouseStatus();
+
+    Label infoLabel;
+
     @Override
-    public void start(Stage stage) {
+    public void start(Stage primaryStage) {
+
         Group root = new Group();
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(this.getClass().getResource("style.css").toExternalForm());
-        stage.setScene(scene);
 
-        double sliderWidth = 200;
+        infoLabel = new Label();
+        root.getChildren().add( infoLabel);
 
-        final Slider slider = new Slider();
-        slider.setMin(0);
-        slider.setMax(50);
-        slider.setMinWidth(sliderWidth);
-        slider.setMaxWidth(sliderWidth);
+        scene = new Scene(root, 640, 480);
 
-        final ProgressBar pb = new ProgressBar(0);
-        pb.setMinWidth(sliderWidth);
-        pb.setMaxWidth(sliderWidth);
+        primaryStage.setScene(scene);
+        primaryStage.show();
 
-        slider.valueProperty().addListener(new ChangeListener<Number>() {
-            public void changed(ObservableValue<? extends Number> ov,
-                                Number old_val, Number new_val) {
-                pb.setProgress(new_val.doubleValue() / 50);
-            }
+        addInputListeners();
+
+    }
+
+
+    private void addInputListeners() {
+
+        scene.addEventFilter(MouseEvent.ANY, e -> {
+
+            infoLabel.setText("Moving");
+
+            mouseStatus.setX(e.getX());
+            mouseStatus.setY(e.getY());
+            mouseStatus.setPrimaryButtonDown(e.isPrimaryButtonDown());
+            mouseStatus.setSecondaryButtonDown(e.isSecondaryButtonDown());
+
         });
 
-        StackPane pane = new StackPane();
+        AnimationTimer loop = new AnimationTimer() {
 
-        pane.getChildren().addAll(pb, slider);
+            long deltaNs = 900_000_000;
 
-        final HBox hb = new HBox();
-        hb.setSpacing(5);
-        hb.setAlignment(Pos.CENTER);
-        hb.getChildren().addAll(pane);
+            double currX;
+            double currY;
+            long currNs;
 
-        scene.setRoot(hb);
-        stage.show();
+            double prevX;
+            double prevY;
+            long prevNs;
+
+            @Override
+            public void handle(long now) {
+
+                currX = mouseStatus.x;
+                currY = mouseStatus.y;
+                currNs = now;
+
+                if( currNs - prevNs > deltaNs) {
+
+                    if( prevX == currX && prevY == currY) {
+                        infoLabel.setText("Stopped");
+                    }
+
+                    prevX = currX;
+                    prevY = currY;
+                    prevNs = currNs;
+                }
+
+            }
+        };
+        loop.start();
+
+    }
+
+
+
+    public class MouseStatus {
+
+        double x;
+        double y;
+        boolean primaryButtonDown;
+        boolean secondaryButtonDown;
+
+        public double getX() {
+            return x;
+        }
+        public void setX(double x) {
+            this.x = x;
+        }
+        public double getY() {
+            return y;
+        }
+        public void setY(double y) {
+            this.y = y;
+        }
+        public boolean isPrimaryButtonDown() {
+            return primaryButtonDown;
+        }
+        public void setPrimaryButtonDown(boolean primaryButtonDown) {
+            this.primaryButtonDown = primaryButtonDown;
+        }
+        public boolean isSecondaryButtonDown() {
+            return secondaryButtonDown;
+        }
+        public void setSecondaryButtonDown(boolean secondaryButtonDown) {
+            this.secondaryButtonDown = secondaryButtonDown;
+        }
+
+
     }
 
     public static void main(String[] args) {

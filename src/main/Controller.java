@@ -1,5 +1,6 @@
 package main;
 
+import javafx.animation.AnimationTimer;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
@@ -12,6 +13,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
@@ -20,6 +22,7 @@ import javafx.scene.media.MediaView;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import main.helpFunction.MouseStatus;
 
 import java.io.File;
 import java.net.URL;
@@ -27,6 +30,8 @@ import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 public class Controller implements Initializable{
+
+    private MouseStatus mouseStatus = new MouseStatus();
 
     private boolean isPlaying = true;
     private boolean isFullScreen = false;
@@ -40,6 +45,7 @@ public class Controller implements Initializable{
     @FXML private Slider soundSlider;
     @FXML private HBox bottomHBox;
     @FXML private GridPane bottomMenu;
+    @FXML private BorderPane mainPane;
     @FXML private GridPane leftGridPane;
     @FXML private HBox leftHBox;
     @FXML private ProgressBar progressBar;
@@ -79,6 +85,7 @@ public class Controller implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        addListinerForMovingMouse();
         String path =  new File("C:/Users/piotr/Desktop/tgt.mp4").getAbsolutePath();
         media = new Media(new File(path).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
@@ -189,11 +196,14 @@ public class Controller implements Initializable{
         Stage stage = Main.getStage();
         stage.setFullScreen(!stage.isFullScreen());
         isFullScreen = !isFullScreen;
+
         if(isFullScreen){
             fullScreen.setImage(normalScreen2Image);
+            mainPane.setBottom(null);
             //menu have to disapear
         }else {
             //menu have to be back
+            mainPane.setBottom(bottomMenu);
         }
 
     }
@@ -315,5 +325,59 @@ public class Controller implements Initializable{
     public void changeColorOfProgressBarOnMouseExited() {
         progressBar.getStylesheets().clear();
         progressBar.getStylesheets().setAll("/style/progresBar.css");
+    }
+
+    public void showMenuWhenFullScreen(MouseEvent mouseEvent) {
+        if(isFullScreen){
+            mainPane.setBottom(bottomMenu);
+        }
+    }
+
+    private void addListinerForMovingMouse() {
+
+        mainPane.addEventFilter(MouseEvent.ANY, e -> {
+
+            System.out.println("ruszam");
+            mouseStatus.setX(e.getX());
+            mouseStatus.setY(e.getY());
+            mouseStatus.setPrimaryButtonDown(e.isPrimaryButtonDown());
+            mouseStatus.setSecondaryButtonDown(e.isSecondaryButtonDown());
+
+        });
+
+        AnimationTimer loop = new AnimationTimer() {
+
+            long deltaNs = 900_000_000;
+
+            double currX;
+            double currY;
+            long currNs;
+
+            double prevX;
+            double prevY;
+            long prevNs;
+
+            @Override
+            public void handle(long now) {
+
+                currX = mouseStatus.getX();
+                currY = mouseStatus.getY();
+                currNs = now;
+
+                if( currNs - prevNs > deltaNs) {
+
+                    if( prevX == currX && prevY == currY) {
+                        System.out.println("nie ruszam xd");
+                    }
+
+                    prevX = currX;
+                    prevY = currY;
+                    prevNs = currNs;
+                }
+
+            }
+        };
+        loop.start();
+
     }
 }
