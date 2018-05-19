@@ -1,21 +1,22 @@
 package main;
 
 import javafx.animation.AnimationTimer;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -43,11 +44,8 @@ public class Controller implements Initializable{
     private Media media;
 
     @FXML private Slider soundSlider;
-    @FXML private HBox bottomHBox;
     @FXML private GridPane bottomMenu;
     @FXML private BorderPane mainPane;
-    @FXML private GridPane leftGridPane;
-    @FXML private HBox leftHBox;
     @FXML private ProgressBar progressBar;
     @FXML private Text currentDuration;
     @FXML private Text duration;
@@ -63,24 +61,24 @@ public class Controller implements Initializable{
 
 
     //images, icons
-    private Image playImage = new Image("/pngs/play.png");
-    private Image play2Image = new Image("/pngs/play2.png");
-    private Image pauseImage = new Image("/pngs/pause.png");
-    private Image pause2Image = new Image("/pngs/pause2.png");
-    private Image fastForward2Image = new Image("/pngs/fastForward2.png");
-    private Image fastForwardImage = new Image("/pngs/fastForward.png");
-    private Image fastRewind2Image = new Image("/pngs/fastRewind2.png");
-    private Image fastRewindImage = new Image("/pngs/fastRewind.png");
-    private Image subtitles2Image = new Image("/pngs/subtitles2.png");
-    private Image subtitlesImage = new Image("/pngs/subtitles.png");
-    private Image fullScreen2Image = new Image("/pngs/fullScreen2.png");
-    private Image fullScreenImage = new Image("/pngs/fullScreen.png");
-    private Image soundsOn2Image = new Image("/pngs/speakerOn2.png");
-    private Image soundsOnImage = new Image("/pngs/speakerOn.png");
-    private Image soundsOff2Image = new Image("/pngs/speakerOff2.png");
-    private Image soundsOffImage = new Image("/pngs/speakerOff.png");
-    private Image normalScreen2Image = new Image("/pngs/normalScreen2.png");
-    private Image normalScreenImage = new Image("/pngs/normalScreen.png");
+    private final Image playImage = new Image("/pngs/play.png");
+    private final Image play2Image = new Image("/pngs/play2.png");
+    private final Image pauseImage = new Image("/pngs/pause.png");
+    private final Image pause2Image = new Image("/pngs/pause2.png");
+    private final Image fastForward2Image = new Image("/pngs/fastForward2.png");
+    private final Image fastForwardImage = new Image("/pngs/fastForward.png");
+    private final Image fastRewind2Image = new Image("/pngs/fastRewind2.png");
+    private final Image fastRewindImage = new Image("/pngs/fastRewind.png");
+    private final Image subtitles2Image = new Image("/pngs/subtitles2.png");
+    private final Image subtitlesImage = new Image("/pngs/subtitles.png");
+    private final Image fullScreen2Image = new Image("/pngs/fullScreen2.png");
+    private final Image fullScreenImage = new Image("/pngs/fullScreen.png");
+    private final Image soundsOn2Image = new Image("/pngs/speakerOn2.png");
+    private final Image soundsOnImage = new Image("/pngs/speakerOn.png");
+    private final Image soundsOff2Image = new Image("/pngs/speakerOff2.png");
+    private final Image soundsOffImage = new Image("/pngs/speakerOff.png");
+    private final Image normalScreen2Image = new Image("/pngs/normalScreen2.png");
+    private final Image normalScreenImage = new Image("/pngs/normalScreen.png");
 
 
     @Override
@@ -91,42 +89,30 @@ public class Controller implements Initializable{
         mediaPlayer = new MediaPlayer(media);
         mediaView.setMediaPlayer(mediaPlayer);
         mediaPlayer.setAutoPlay(true);
-       /* DoubleProperty width=mediaView.fitWidthProperty();
+
+        //binding mediaView to scene width and height
+        DoubleProperty width=mediaView.fitWidthProperty();
         DoubleProperty height=mediaView.fitHeightProperty();
         width.bind(Bindings.selectDouble(mediaView.sceneProperty(),"width"));
-        height.bind(Bindings.selectDouble(mediaView.sceneProperty(),"height"));*/
+        height.bind(Bindings.selectDouble(mediaView.sceneProperty(),"height"));
 
-        /*playPause.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                playOrPause();
-            }
-        });*/
-        //this is lambda ;o, shorter but...
-
-        //playPause.setOnAction((event) -> playOrPause());
-/*        scrollBack.setOnAction(event -> scroll(-5000));
-        scrollForward.setOnAction(event -> scroll(5000));
-        fastScrollBack.setOnAction(event -> scroll(-20000));*/
-
-        //playPause.setGraphic(new ImageView(image));
-
-       // bottomBar.getStylesheets().add("style/BottomBar.css");
-       // playPause.getStylesheets().add("style/BottomBar.css");
-
-
-        //playPause.setOnMouseClicked(event -> playOrPause());
+        mainPane.addEventHandler(KeyEvent.KEY_PRESSED,keyEvent->{
+                        if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                            if(isFullScreen){
+                                isFullScreen = false;
+                                fullScreen.setImage(fullScreenImage);
+                            }
+                        }
+                    });
 
         fastForward.setOnMouseClicked(event -> scroll(20000));
         fastRewind.setOnMouseClicked(event -> scroll(-20000));
 
-        mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
-            @Override
-            public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
+        mediaPlayer.currentTimeProperty().addListener(
+                (ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue)->{
                 currentDuration.setText(secundsToHHMMSS(newValue.toSeconds()));
                 progressBar.setProgress(newValue.toSeconds()/HHMMSStoSecunds(duration.getText()));
-            }
-        });
+            });
 
 
         progressBar.setOnMouseDragged(event -> {
@@ -136,18 +122,13 @@ public class Controller implements Initializable{
         });
 
         //its oke, but need to get an explenation of why i have to add 1% so it works
-        progressBar.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
+        progressBar.setOnMouseClicked(event->{
                 progressBar.setProgress(event.getX()/(progressBar.getWidth())+0.01); //manulay add 1% ??xd
                 double newDurationOfMedia = progressBar.getProgress()*media.getDuration().toMillis();
                 mediaPlayer.seek(new Duration(newDurationOfMedia));
-            }
-        });
+            });
 
-        soundSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        soundSlider.valueProperty().addListener((observable, oldValue,newValue)->{
                 mediaPlayer.setVolume(newValue.doubleValue()/100);
                 if(newValue.doubleValue()==0) {
                     volumeBeforeChange = oldValue.doubleValue()/100;
@@ -159,8 +140,7 @@ public class Controller implements Initializable{
                     soundOn.setImage(soundsOnImage);
                     if(mediaPlayer.getVolume()<0.3) soundSlider.setValue(30);
                 }
-            }
-        });
+            });
 
         mediaPlayer.setOnReady(()->{
             currentDuration.setText("00:00:00");
@@ -174,11 +154,11 @@ public class Controller implements Initializable{
 
     public void playOrPause(){
         if (isPlaying) {
-            isPlaying = !isPlaying;
+            isPlaying = false;
             mediaPlayer.pause();
             playPause.setImage(play2Image);
         } else {
-            isPlaying = !isPlaying;
+            isPlaying = true;
             mediaPlayer.play();
             playPause.setImage(pause2Image);
         }
@@ -196,15 +176,6 @@ public class Controller implements Initializable{
         Stage stage = Main.getStage();
         stage.setFullScreen(!stage.isFullScreen());
         isFullScreen = !isFullScreen;
-
-        if(isFullScreen){
-            fullScreen.setImage(normalScreen2Image);
-            mainPane.setBottom(null);
-            //menu have to disapear
-        }else {
-            //menu have to be back
-            mainPane.setBottom(bottomMenu);
-        }
 
     }
 
@@ -327,17 +298,19 @@ public class Controller implements Initializable{
         progressBar.getStylesheets().setAll("/style/progresBar.css");
     }
 
-    public void showMenuWhenFullScreen(MouseEvent mouseEvent) {
+    public void showMenuWhenFullScreen() {
         if(isFullScreen){
             mainPane.setBottom(bottomMenu);
         }
     }
 
+    //handle disapiring of menu when no active
     private void addListinerForMovingMouse() {
 
         mainPane.addEventFilter(MouseEvent.ANY, e -> {
 
-            System.out.println("ruszam");
+            if(isFullScreen) mainPane.setBottom(bottomMenu);
+
             mouseStatus.setX(e.getX());
             mouseStatus.setY(e.getY());
             mouseStatus.setPrimaryButtonDown(e.isPrimaryButtonDown());
@@ -367,7 +340,7 @@ public class Controller implements Initializable{
                 if( currNs - prevNs > deltaNs) {
 
                     if( prevX == currX && prevY == currY) {
-                        System.out.println("nie ruszam xd");
+                        if(isFullScreen) mainPane.setBottom(null);
                     }
 
                     prevX = currX;
