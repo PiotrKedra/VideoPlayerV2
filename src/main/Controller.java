@@ -8,8 +8,10 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -24,6 +26,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.helpFunction.MouseStatus;
+import main.helpFunction.Popup;
 
 import java.io.File;
 import java.net.URL;
@@ -59,6 +62,10 @@ public class Controller implements Initializable{
     @FXML private ImageView subtitles;
     @FXML private ImageView soundOn;
 
+    @FXML private TextField addMovieButton;
+    private String moviePath;
+    final Popup popup = new Popup();
+
 
     //images, icons
     private final Image playImage = new Image("/pngs/play.png");
@@ -84,17 +91,17 @@ public class Controller implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         addListinerForMovingMouse();
-        String path =  new File("C:/Users/piotr/Desktop/tgt.mp4").getAbsolutePath();
+        /*String path =  new File("C:/Users/piotr/Desktop/tgt.mp4").getAbsolutePath();
         media = new Media(new File(path).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         mediaView.setMediaPlayer(mediaPlayer);
-        mediaPlayer.setAutoPlay(true);
+        mediaPlayer.setAutoPlay(true);*/
 
         //binding mediaView to scene width and height
-        DoubleProperty width=mediaView.fitWidthProperty();
+        /*DoubleProperty width=mediaView.fitWidthProperty();
         DoubleProperty height=mediaView.fitHeightProperty();
         width.bind(Bindings.selectDouble(mediaView.sceneProperty(),"width"));
-        height.bind(Bindings.selectDouble(mediaView.sceneProperty(),"height"));
+        height.bind(Bindings.selectDouble(mediaView.sceneProperty(),"height"));*/
 
         mainPane.addEventHandler(KeyEvent.KEY_PRESSED,keyEvent->{
                         if (keyEvent.getCode() == KeyCode.ESCAPE) {
@@ -107,12 +114,6 @@ public class Controller implements Initializable{
 
         fastForward.setOnMouseClicked(event -> scroll(20000));
         fastRewind.setOnMouseClicked(event -> scroll(-20000));
-
-        mediaPlayer.currentTimeProperty().addListener(
-                (ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue)->{
-                currentDuration.setText(secundsToHHMMSS(newValue.toSeconds()));
-                progressBar.setProgress(newValue.toSeconds()/HHMMSStoSecunds(duration.getText()));
-            });
 
 
         progressBar.setOnMouseDragged(event -> {
@@ -142,11 +143,10 @@ public class Controller implements Initializable{
                 }
             });
 
-        mediaPlayer.setOnReady(()->{
-            currentDuration.setText("00:00:00");
-            System.out.println(currentDuration.getText());
-            System.out.println(media.getDuration());
-            duration.setText(secundsToHHMMSS(media.getDuration().toSeconds()));
+        addMovieButton.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                restartMediaPlayer(addMovieButton.getText());
+            }
         });
 
 
@@ -352,5 +352,44 @@ public class Controller implements Initializable{
         };
         loop.start();
 
+    }
+
+
+    public void restartMediaPlayer(String moviePath){
+        try {
+            System.out.println(moviePath);
+            //this geAbsolutPath is rly important, without it it doesnt wokr?????
+            String path = new File(moviePath).getAbsolutePath();
+            media = new Media(new File(path).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            mediaView.setMediaPlayer(mediaPlayer);
+            mediaPlayer.setAutoPlay(true);
+
+            mediaPlayer.currentTimeProperty().addListener(
+                    (ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) -> {
+                        currentDuration.setText(secundsToHHMMSS(newValue.toSeconds()));
+                        progressBar.setProgress(newValue.toSeconds() / HHMMSStoSecunds(duration.getText()));
+                    });
+
+            mediaPlayer.setOnReady(() -> {
+                currentDuration.setText("00:00:00");
+                System.out.println(currentDuration.getText());
+                System.out.println(media.getDuration());
+                duration.setText(secundsToHHMMSS(media.getDuration().toSeconds()));
+            });
+
+            DoubleProperty width = mediaView.fitWidthProperty();
+            DoubleProperty height = mediaView.fitHeightProperty();
+            width.bind(Bindings.selectDouble(mediaView.sceneProperty(), "width"));
+            height.bind(Bindings.selectDouble(mediaView.sceneProperty(), "height"));
+
+            mainPane.setCenter(mediaView);
+        }catch (Exception e){
+            System.out.println("cus zlego patha dales");
+        }
+
+    }
+    public void addMovie() {
+        popup.display();
     }
 }
