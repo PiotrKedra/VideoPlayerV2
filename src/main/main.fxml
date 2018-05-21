@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.Image?>
@@ -15,7 +14,6 @@
 <?import javafx.scene.media.MediaView?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.control.TextField?>
 <BorderPane fx:id="mainPane" focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500" minWidth="700" onMouseDragged="#showMenuWhenFullScreen" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #383838;" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
    <center>
       <MediaView fx:id="mediaView" />
@@ -28,13 +26,19 @@
                   <image>
                      <Image url="@/pngs/fastRewind.png" />
                   </image></ImageView>
-               <ImageView fx:id="Rewind" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" />
+               <ImageView fx:id="Rewind" fitHeight="25.0" fitWidth="25.0" onMouseEntered="#changeImageRewindOnMouseEntered" onMouseExited="#changeImageRewindOnMouseExited" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@/pngs/rewind.png" />
+                  </image></ImageView>
                <ImageView fx:id="playPause" fitHeight="32.0" fitWidth="32.0" onMouseEntered="#changeImagePlayOnMouseEntered" onMouseExited="#changeImagePlayOnMouseExited" onMousePressed="#playOrPause" pickOnBounds="true">
                   <image>
                      <Image url="@/pngs/pause.png" />
                   </image>
                </ImageView>
-               <ImageView fx:id="Forward" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" />
+               <ImageView fx:id="Forward" fitHeight="25.0" fitWidth="25.0" onMouseEntered="#changeImageForwardOnMouseEntered" onMouseExited="#changeImageForwardOnMouseExited" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@/pngs/forward.png" />
+                  </image></ImageView>
                <ImageView fx:id="fastForward" fitHeight="25.0" fitWidth="25.0" onMouseEntered="#changeImageFastForwardOnMouseEntered" onMouseExited="#changeImageFastForwardOnMouseExited" pickOnBounds="true" preserveRatio="true">
                   <image>
                      <Image url="@/pngs/fastForward.png" />
@@ -52,7 +56,12 @@
                <GridPane prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="TOP_CENTER">
                   <HBox alignment="CENTER_LEFT" GridPane.halignment="CENTER" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                   <children>
-                     <TextField fx:id="addMovieButton" onMouseClicked="#addMovie" prefHeight="31.0" minWidth="16.0" text="Movie" />
+                        <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true" />
+                     <ImageView fx:id="addMovieButton" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#addMovie" onMouseEntered="#changeImageAddMovieOnMouseEntered" onMouseExited="#changeImageAddMovieOnMouseExited" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@/pngs/addMovie.png" />
+                        </image>
+                     </ImageView>
                   </children></HBox>
                   <columnConstraints>
                      <ColumnConstraints />

@@ -8,6 +8,8 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
@@ -19,14 +21,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.helpFunction.MouseStatus;
-import main.helpFunction.Popup;
 
 import java.io.File;
 import java.net.URL;
@@ -54,15 +57,15 @@ public class Controller implements Initializable{
     @FXML private Text duration;
 
     @FXML private ImageView playPause;
-    @FXML private ImageView scrollBack;
-    @FXML private ImageView scrollForward;
+    @FXML private ImageView Rewind;
+    @FXML private ImageView Forward;
     @FXML private ImageView fastRewind;
     @FXML private ImageView fastForward;
     @FXML private ImageView fullScreen;
     @FXML private ImageView subtitles;
     @FXML private ImageView soundOn;
 
-    @FXML private TextField addMovieButton;
+    @FXML private ImageView addMovieButton;
     private String moviePath;
     final Popup popup = new Popup();
 
@@ -86,6 +89,12 @@ public class Controller implements Initializable{
     private final Image soundsOffImage = new Image("/pngs/speakerOff.png");
     private final Image normalScreen2Image = new Image("/pngs/normalScreen2.png");
     private final Image normalScreenImage = new Image("/pngs/normalScreen.png");
+    private final Image addMovie2Image = new Image("/pngs/addMovie2.png");
+    private final Image addMovieImage = new Image("pngs/addMovie.png");
+    private final Image forwardImage = new Image("pngs/forward.png");
+    private final Image forward2Image = new Image("pngs/forward2.png");
+    private final Image rewindImage = new Image("pngs/rewind.png");
+    private final Image rewind2Image = new Image("pngs/rewind2.png");
 
 
     @Override
@@ -114,7 +123,8 @@ public class Controller implements Initializable{
 
         fastForward.setOnMouseClicked(event -> scroll(20000));
         fastRewind.setOnMouseClicked(event -> scroll(-20000));
-
+        Forward.setOnMouseClicked(event -> scroll(3000));
+        Rewind.setOnMouseClicked(event -> scroll(-3000));
 
         progressBar.setOnMouseDragged(event -> {
             progressBar.setProgress(event.getX()/(progressBar.getWidth())+0.01);
@@ -142,12 +152,6 @@ public class Controller implements Initializable{
                     if(mediaPlayer.getVolume()<0.3) soundSlider.setValue(30);
                 }
             });
-
-        addMovieButton.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                restartMediaPlayer(addMovieButton.getText());
-            }
-        });
 
 
     }
@@ -265,6 +269,31 @@ public class Controller implements Initializable{
         subtitles.setImage(subtitlesImage);
     }
 
+    public void changeImageAddMovieOnMouseEntered() {
+        addMovieButton.setImage(addMovie2Image);
+    }
+
+    public void changeImageAddMovieOnMouseExited(){
+        addMovieButton.setImage(addMovieImage);
+    }
+
+    public void changeImageForwardOnMouseEntered() {
+        Forward.setImage(forward2Image);
+    }
+
+    public void changeImageForwardOnMouseExited() {
+        Forward.setImage(forwardImage);
+    }
+
+    public void changeImageRewindOnMouseEntered() {
+        Rewind.setImage(rewind2Image);
+    }
+
+    public void changeImageRewindOnMouseExited() {
+        Rewind.setImage(rewindImage);
+    }
+
+
     public void changeImageFullScreenOnMouseEntered() {
         if(!isFullScreen) fullScreen.setImage(fullScreen2Image);
         else fullScreen.setImage(normalScreen2Image);
@@ -355,17 +384,20 @@ public class Controller implements Initializable{
     }
 
 
-    public void restartMediaPlayer(String moviePath){
+    private void restartMediaPlayer(String moviePath){
         try {
             System.out.println(moviePath);
             //this geAbsolutPath is rly important, without it it doesnt wokr?????
             String path = new File(moviePath).getAbsolutePath();
+
             media = new Media(new File(path).toURI().toString());
             mediaPlayer = new MediaPlayer(media);
             mediaView.setMediaPlayer(mediaPlayer);
             mediaPlayer.setAutoPlay(true);
-
-            mediaPlayer.currentTimeProperty().addListener(
+        }catch (Exception e){
+            System.out.println("cus zlego patha dales");
+        }
+        try { mediaPlayer.currentTimeProperty().addListener(
                     (ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) -> {
                         currentDuration.setText(secundsToHHMMSS(newValue.toSeconds()));
                         progressBar.setProgress(newValue.toSeconds() / HHMMSStoSecunds(duration.getText()));
@@ -377,6 +409,12 @@ public class Controller implements Initializable{
                 System.out.println(media.getDuration());
                 duration.setText(secundsToHHMMSS(media.getDuration().toSeconds()));
             });
+        }catch (Exception e){
+            System.out.println("cus zlego sie stalo");
+        }
+
+
+
 
             DoubleProperty width = mediaView.fitWidthProperty();
             DoubleProperty height = mediaView.fitHeightProperty();
@@ -384,12 +422,39 @@ public class Controller implements Initializable{
             height.bind(Bindings.selectDouble(mediaView.sceneProperty(), "height"));
 
             mainPane.setCenter(mediaView);
-        }catch (Exception e){
-            System.out.println("cus zlego patha dales");
-        }
 
     }
     public void addMovie() {
         popup.display();
+    }
+
+    private class Popup {
+        private TextField pathField = new TextField("C:/Users/piotr/Desktop/tgt.mp4");
+
+        private void display()
+        {
+            Stage popupwindow=new Stage();
+            popupwindow.initModality(Modality.APPLICATION_MODAL);
+            popupwindow.setTitle("Give movie path");
+            popupwindow.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+                if (event.getCode() == KeyCode.ENTER) {
+                    System.out.println("dsddssdssdds");
+                    System.out.println(getPath());
+                    restartMediaPlayer(getPath());
+                    popupwindow.close();
+                }
+            });
+            VBox layout= new VBox(10);
+            pathField = new TextField("C:/Users/piotr/Desktop/tgt.mp4");
+            layout.getChildren().addAll(pathField);
+            layout.setAlignment(Pos.CENTER);
+            Scene scene1= new Scene(layout, 300, 250);
+            popupwindow.setScene(scene1);
+            popupwindow.showAndWait();
+        }
+
+        private String getPath() {
+            return pathField.getText();
+        }
     }
 }
